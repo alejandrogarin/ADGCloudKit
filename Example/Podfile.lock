@@ -1,0 +1,14 @@
+PODS:
+  - ADGCloudKit (0.1.0)
+
+DEPENDENCIES:
+  - ADGCloudKit (from `../`)
+
+EXTERNAL SOURCES:
+  ADGCloudKit:
+    :path: ../
+
+SPEC CHECKSUMS:
+  ADGCloudKit: 751785ca904914e048a4c2da712e29a9605f15be
+
+COCOAPODS: 0.37.2

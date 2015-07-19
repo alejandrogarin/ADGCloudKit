@@ -1,0 +1,6 @@
+framework module Pods_ADGCloudKit_Tests {
+  umbrella header "Pods-ADGCloudKit_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "ADGCloudKit",
+  "version": "0.1.0",
+  "summary": "Apple CloudKit made easy",
+  "description": "                       \n",
+  "homepage": "https://github.com/alejandrogarin/ADGCloudKit",
+  "license": "MIT",
+  "authors": {
+    "Alejandro Garin": "agarin@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/alejandrogarin/ADGCloudKit.git",
+    "tag": "0.1.0"
+  },
+  "social_media_url": "https://twitter.com/alejandrogarin",
+  "platforms": {
+    "ios": "8.0"
+  },
+  "requires_arc": true,
+  "source_files": "Pod/Classes/**/*",
+  "resource_bundles": {
+    "ADGCloudKit": [
+      "Pod/Assets/*.png"
+    ]
+  },
+  "frameworks": "CloudKit"
+}

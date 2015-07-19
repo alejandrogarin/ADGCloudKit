@@ -1,0 +1,6 @@
+framework module ADGCloudKit {
+  umbrella header "Pods-ADGCloudKit_Example-ADGCloudKit-umbrella.h"
+
+  export *
+  module * { export * }
+}
