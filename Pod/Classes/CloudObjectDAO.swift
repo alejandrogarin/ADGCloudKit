@@ -32,7 +32,6 @@ import CloudKit
 public enum ADGCloudKitError : ErrorType {
     case CursorNotAvailable
     case InvalidRecordId
-    case CouldNotCreateRepresentationForRecord
 }
 
 public class CloudObjectDAO<T: CloudRecord> {
@@ -63,17 +62,14 @@ public class CloudObjectDAO<T: CloudRecord> {
     }
     
     public func insertObject(object: T, completionHandler: (object: T?, error: NSError?) -> Void) {
-        
         let map: [String: CKRecordValue] = self.createDictionaryFromObject(object)
-        
         self.mapDAO.insertEntity(self.entityName, withMap: map) { (map, error) -> Void in
             self.manageSimpleCompletionHandlerWithMap(map, error: error, completionHandler: completionHandler)
         }
     }
     
     public func updateObject(record: T, completionHandler: (object: T?, error: NSError?) -> Void) throws {
-
-        guard let recordIdentifier = record.recordID else {
+        guard let recordIdentifier = record.recordName else {
             throw ADGCloudKitError.InvalidRecordId
         }
 
@@ -86,8 +82,7 @@ public class CloudObjectDAO<T: CloudRecord> {
     }
     
     public func deleteObject(object: T, completionHandler: (error: NSError?) -> Void) throws {
-        
-        guard let recordIdentifier = object.recordID else {
+        guard let recordIdentifier = object.recordName else {
             throw ADGCloudKitError.InvalidRecordId
         }
         
@@ -97,19 +92,16 @@ public class CloudObjectDAO<T: CloudRecord> {
     }
     
     public func findNextObjectsWithLimit(resultsLimit: Int?, completionHandler: (objects: [T]?, error: NSError?) -> Void) {
-        
         guard let cursor = self.currentCursor else {
             completionHandler(objects:nil, error: nil)
             return
         }
-        
         self.mapDAO.findNextRowsWithCursor(cursor, resultsLimit: resultsLimit) { (rows, cursor, error) -> Void in
             self.manageListCompletionHandlerWithRowsOfMap(rows, cursor: cursor, error: error, completionHandler: completionHandler)
         }
     }
     
     public func findObjectsWithPredicate(predicate: NSPredicate?, sortDescriptors: [NSSortDescriptor]?, resultsLimit: Int?, completionHandler: (objects: [T]?, error: NSError?) -> Void) {
-        
         self.mapDAO.findRowsWithEntityName(self.entityName, predicate: predicate, sortDescriptors: sortDescriptors, resultsLimit: resultsLimit) { (rows, cursor, error) -> Void in
             self.manageListCompletionHandlerWithRowsOfMap(rows, cursor: cursor, error: error, completionHandler: completionHandler)
         }
@@ -136,25 +128,20 @@ public class CloudObjectDAO<T: CloudRecord> {
             completionHandler(object: nil, error: error)
             return
         }
-        
         guard let newObject = self.createObject(), map = map else {
             completionHandler(object: nil, error: error)
             return
         }
-        
         self.fillObject(object: newObject, withMap: map)
         completionHandler(object: newObject, error: error)
     }
     
     private func manageListCompletionHandlerWithRowsOfMap(rowsOfMap: [[String: CKRecordValue]], cursor:CKQueryCursor?, error: NSError?, completionHandler: (records: [T]?, error: NSError?) -> Void) {
-        
         self.currentCursor = cursor
-        
         if (error != nil) {
             completionHandler(records:nil, error: error)
             return
         }
-        
         var newArray:[T] = []
         for map:[String: CKRecordValue] in rowsOfMap {
             
@@ -168,37 +155,44 @@ public class CloudObjectDAO<T: CloudRecord> {
     }
     
     private func fillObject(object newObject: T, withMap map: [String: CKRecordValue]) {
-
-        newObject.recordID = map[CloudMapDAO.MapKeys.RecordName.rawValue] as? String
-        newObject.zoneID = map[CloudMapDAO.MapKeys.ZoneName.rawValue] as? String
-        let mirrorObject:MirrorType = reflect(newObject)
+        newObject.recordName = map[CloudMapDAO.MapKeys.RecordName.rawValue] as? String
+        newObject.zoneName = map[CloudMapDAO.MapKeys.ZoneName.rawValue] as? String
+        newObject.ownerName = map[CloudMapDAO.MapKeys.OwnerName.rawValue] as? String
         
-        for i in 0..<mirrorObject.count {
-            let (index, _) = mirrorObject[i]
-            let value = map[index]
-            if let value = value {
-                newObject.setValue(value, forKey: index)
+        let mirrorObject = Mirror(reflecting: newObject)
+        for children in mirrorObject.children {
+            if let index = children.label {
+                let value = map[index]
+                if let value = value {
+                    newObject.setValue(value, forKey: index)
+                }
             }
         }
     }
     
     private func createDictionaryFromObject(object: T) -> [String: CKRecordValue] {
-        
         var map: [String: CKRecordValue] = [:]
-        
-        let mirrorObject:MirrorType = reflect(object)
-        for i in 0..<mirrorObject.count {
-            let (index, mirror) = mirrorObject[i]
-            if let value = self.unwrap(mirror.value) {
-                //print("\(index) - \(value)")
-                map[index] = value
+        let mirrorObject = Mirror(reflecting: object)
+        for children in mirrorObject.children {
+            if let index = children.label {
+                map[index] = self.unwrap(children.value)
             }
         }
         return map
     }
     
+    private func unwrap(any:Any) -> CKRecordValue? {
+        let mirror = Mirror(reflecting: any)
+        if (mirror.children.count == 0) {
+            return nil
+        }
+        if let children = mirror.children.first {
+            return children.value as? CKRecordValue
+        }
+        return nil
+    }
+    
     private func guessEntityName() -> String {
-        
         var entityName = String(T.self)
         let components = entityName.componentsSeparatedByString(".")
         if (components.count == 1) {
@@ -212,16 +206,6 @@ public class CloudObjectDAO<T: CloudRecord> {
         } else {
             return ""
         }
-    }
-    
-    private func unwrap(any:Any) -> CKRecordValue? {
-        let mi:MirrorType = reflect(any)
-        if mi.disposition != .Optional {
-            return any as? CKRecordValue
-        }
-        if mi.count == 0 { return nil } // Optional.None
-        let (_,some) = mi[0]
-        return some.value as? CKRecordValue
     }
 }
 

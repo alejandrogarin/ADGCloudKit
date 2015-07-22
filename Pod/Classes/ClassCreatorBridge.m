@@ -30,7 +30,7 @@
 
 @implementation ClassCreatorBridge
 
-- (id)createClassFromName:(NSString *)className {
+- (_Nullable id)createClassFromName:(NSString * _Nonnull)className {
     id class = NSClassFromString(className);
     if (class) {
         return [[class alloc] init];

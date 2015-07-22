@@ -30,8 +30,9 @@ import Foundation
 import CloudKit
 
 public class CloudRecord: NSObject {
-    public var recordID: String?
-    public var zoneID: String?
+    public var recordName: String?
+    public var zoneName: String?
+    public var ownerName: String?
     
     public var entityName:String? {
         get {
@@ -45,11 +46,10 @@ public class CloudRecord: NSObject {
     }
     
     public func asCKRecord() -> CKRecord? {
-        
-        guard let recordID = self.recordID, entityName = self.entityName else {
+        guard let recordName = self.recordName, zoneName = self.zoneName, ownerName = self.ownerName, entityName = self.entityName else {
             return nil
         }
-        return CKRecord(recordType: entityName, recordID: CKRecordID(recordName: recordID))
+        return CKRecord(recordType: entityName, recordID: CKRecordID(recordName: recordName, zoneID: CKRecordZoneID(zoneName: zoneName, ownerName: ownerName)))
     }
     
     public func asCKReferenceWithDeleteAction() -> CKReference? {
@@ -64,12 +64,5 @@ public class CloudRecord: NSObject {
             return nil
         }
         return CKReference(record: record, action: CKReferenceAction.None)
-    }
-    
-    public func asCKReferenceWithAction(action: CKReferenceAction) -> CKReference? {
-        guard let record = self.asCKRecord() else {
-            return nil
-        }
-        return CKReference(record: record, action: action)
     }
 }

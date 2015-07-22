@@ -34,6 +34,7 @@ public class CloudMapDAO {
     public enum MapKeys: String {
         case RecordName = "cloudkit_record_name"
         case ZoneName = "cloudkit_zone_name"
+        case OwnerName = "cloudkit_owner_name"
     }
     
     private let context:CloudContext
@@ -140,6 +141,7 @@ public class CloudMapDAO {
         var map: [String: CKRecordValue] = [:]
         map[MapKeys.RecordName.rawValue] = validRecord.recordID.recordName
         map[MapKeys.ZoneName.rawValue] = validRecord.recordID.zoneID.zoneName
+        map[MapKeys.OwnerName.rawValue] = validRecord.recordID.zoneID.ownerName
         for key:String in validRecord.allKeys() {
             map[key] = validRecord[key]
         }

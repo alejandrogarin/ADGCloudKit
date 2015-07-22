@@ -30,6 +30,6 @@
 
 @interface ClassCreatorBridge : NSObject
 
-- (__nullable id)createClassFromName:(__nullable NSString *)className;
+- (_Nullable id)createClassFromName:(NSString * _Nonnull)className;
 
 @end
