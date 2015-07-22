@@ -8,7 +8,7 @@ Swift 2.0
 
 ## Author
 
-Alejandro Garin, agarin@gmail.com / @alejandrogarin
+Alejandro Garin / @alejandrogarin
 
 ## License
 
