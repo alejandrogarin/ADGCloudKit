@@ -4,7 +4,7 @@ A set of classes to access your Apple CloudKit records in an easy way. Check the
 
 ## Requirements
 
-Swift 2.0
+Swift 2.0 SDK Beta 4
 
 ## Author
 
