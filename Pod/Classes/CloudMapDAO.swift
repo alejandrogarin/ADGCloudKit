@@ -37,16 +37,7 @@ public class CloudMapDAO {
         case OwnerName = "cloudkit_owner_name"
     }
     
-    private let context:CloudContext
-    
-    public var delegate: CloudContextDelegate? {
-        get {
-            return self.context.delegate
-        }
-        set(newDelegate) {
-            self.context.delegate = newDelegate
-        }
-    }
+    public let context:CloudContext
     
     init(usingContext context: CloudContext) {
         self.context = context

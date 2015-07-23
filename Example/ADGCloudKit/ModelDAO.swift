@@ -30,14 +30,14 @@ import Foundation
 import ADGCloudKit
 import CloudKit
 
-
 class BaseDAO<T: CloudRecord>: CloudObjectDAO<T>, CloudContextDelegate {
     
     let loadingView = UIView()
     
     init() {
-        super.init(usingDatabase: CKContainer.defaultContainer().privateCloudDatabase)
-        self.delegate = self
+        let context = CloudContext(usingDatabase: CKContainer.defaultContainer().privateCloudDatabase)
+        super.init(usingContext: context)
+        context.delegate = self
         self.loadingView.translatesAutoresizingMaskIntoConstraints = false
         self.loadingView.backgroundColor = UIColor(white: 0.0, alpha: 0.4)
         self.loadingView.alpha = 1.0

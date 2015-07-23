@@ -36,25 +36,28 @@ public enum ADGCloudKitError : ErrorType {
 
 public class CloudObjectDAO<T: CloudRecord> {
     
-    public var delegate: CloudContextDelegate? {
-        get {
-            return self.mapDAO.delegate
-        }
-        set(newDelegate) {
-            self.mapDAO.delegate = newDelegate
-        }
-    }
-    
     private var currentCursor: CKQueryCursor?
     
-    private var mapDAO = CloudMapDAO(usingContext: CloudContext(usingDatabase: CKContainer.defaultContainer().privateCloudDatabase))
+    private var mapDAO: CloudMapDAO
+    
+    public var context: CloudContext {
+        return self.mapDAO.context
+    }
     
     public var entityName:String {
         return self.guessEntityName()
     }
     
-    public init(usingDatabase database: CKDatabase) {
-        self.mapDAO = CloudMapDAO(usingContext: CloudContext(usingDatabase: database))
+    public convenience init() {
+        self.init(usingContext: CloudContext(usingDatabase: CKContainer.defaultContainer().privateCloudDatabase))
+    }
+    
+    public convenience init(usingDatabase database: CKDatabase) {
+        self.init(usingContext: CloudContext(usingDatabase: database))
+    }
+    
+    public init(usingContext context: CloudContext) {
+        self.mapDAO = CloudMapDAO(usingContext: context)
     }
     
     deinit {
