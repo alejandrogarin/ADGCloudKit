@@ -196,16 +196,11 @@ public class CloudObjectDAO<T: CloudRecord> {
     }
     
     private func guessEntityName() -> String {
-        var entityName = String(T.self)
-        let components = entityName.componentsSeparatedByString(".")
+        let components = String(T.self).componentsSeparatedByString(".")
         if (components.count == 1) {
             return components[0]
         } else if components.count >= 2 {
             return components[1]
-        } else if components.count >= 3 {
-            entityName = components[2]
-            entityName.stringByReplacingOccurrencesOfString(">", withString: "")
-            return components[0]
         } else {
             return ""
         }
