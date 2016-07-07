@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.version          = "0.1.0"
   s.summary          = "Apple CloudKit made easy"
   s.description      = <<-DESC
-                       
+                       Apple CloudKit made easy
                        DESC
   s.homepage         = "https://github.com/alejandrogarin/ADGCloudKit"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
